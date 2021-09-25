@@ -1,6 +1,7 @@
 package hash
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -20,6 +21,22 @@ type Value []byte
 // String returns the full string version of hash along with header
 func (v *Value) String() string {
 	return fmt.Sprintf("%s-%x", hashName, []byte(*v))
+}
+
+func (v *Value) UnmarshalJSON(b []byte) error {
+	b = bytes.Trim(b, `"`)
+	value, err := ValueFromString(string(b))
+	if err != nil {
+		return err
+	}
+
+	*v = value
+
+	return nil
+}
+
+func (v *Value) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("\"%s\"", v.String())), nil
 }
 
 // Short returns the last 5 characters of hash
