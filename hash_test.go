@@ -1,6 +1,7 @@
 package hash_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/alinz/hash.go"
@@ -38,5 +39,30 @@ func TestJsonMarshalUnMarshal(t *testing.T) {
 
 	if expectedHashValue != hashValueFromJson.String() {
 		t.Fatalf("expected %s but got this %s", expectedHashValue, hashValueFromJson.String())
+	}
+}
+
+func TestStructMarshalUnmarshal(t *testing.T) {
+	type testStruct struct {
+		HashValue hash.Value `json:"hash_value"`
+	}
+
+	expectedHashValue := hash.Bytes([]byte("test"))
+
+	b, err := json.Marshal(testStruct{
+		HashValue: expectedHashValue,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var result testStruct
+	err = json.Unmarshal(b, &result)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result.HashValue.String() != expectedHashValue.String() {
+		t.Fatalf("expected %s but got this %s", expectedHashValue, result.HashValue.String())
 	}
 }

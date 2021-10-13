@@ -35,7 +35,7 @@ func (v *Value) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (v *Value) MarshalJSON() ([]byte, error) {
+func (v Value) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%s\"", v.String())), nil
 }
 
